@@ -3,21 +3,45 @@ const botones = document.querySelectorAll("button");
 
 let value = "0";
 pantalla.value = "0";
-//      EVENTOS DE LOS BOTONES
+
+// EVENTOS DE BOTONES
 botones.forEach(btn => {
   btn.addEventListener("click", () => {
 
-    const num = btn.dataset.num;
-    const operador = btn.dataset.operator;
-    const action = btn.dataset.action;
+    let texto = btn.textContent.trim();
 
-    if (num !== undefined) return addNumber(num);
-    if (operador !== undefined) return addOperator(operador);
-    if (action !== undefined) return manejarAccion(action);
+    if (btn.classList.contains("numero")) {
+      return addNumber(texto);
+    }
+
+    if (btn.classList.contains("operador")) {
+      return manejarOperador(texto);
+    }
 
   });
 });
-//          AGREGAR NÚMEROS
+
+// MANEJAR OPERADORES SEGÚN EL TEXTO DEL BOTÓN
+function manejarOperador(op) {
+
+  if (op === "C") return clearAll();
+  if (op === "<-") return deleteLast();
+  if (op === "=") return calcular();
+  if (op === ".") return addDecimal();
+
+  // Mapear operadores visuales a operadores lógicos
+  const map = {
+    "÷": "/",
+    "×": "x",
+    "+": "+",
+    "-": "-",
+    "%": "%"
+  };
+
+  addOperator(map[op]);
+}
+
+//  AGREGAR NÚMERO 
 function addNumber(num) {
 
   if (value === "Error") value = "0";
@@ -30,7 +54,8 @@ function addNumber(num) {
 
   pantalla.value = value;
 }
-//          AGREGAR OPERADOR
+
+//  AGREGAR OPERADOR 
 function addOperator(op) {
 
   const ultimo = value.slice(-1);
@@ -60,7 +85,8 @@ function addOperator(op) {
   value += op;
   pantalla.value = value;
 }
-//          AGREGAR DECIMAL
+
+//  AGREGAR DECIMAL 
 function addDecimal() {
 
   if (value === "0") {
@@ -83,14 +109,8 @@ function addDecimal() {
   value += ".";
   pantalla.value = value;
 }
-//           ACCIONES
-function manejarAccion(action) {
-  if (action === "clear") return clearAll();
-  if (action === "delete") return deleteLast();
-  if (action === "decimal") return addDecimal();
-  if (action === "equal") return calcular();
-}
-//             CÁLCULO
+
+//  CÁLCULO 
 function calcular() {
   try {
 
@@ -102,14 +122,12 @@ function calcular() {
 
     let expr = value;
 
-    // MANEJO DEL PORCENTAJE 
+    // porcentaje
     expr = expr.replace(
-      /(\d+)([\+\-x/])(\d+)%/g, (_, a, op, b) => {
-        return `${a}${op} (${a} * ${b}/100)`;
-      }
+      /(\d+)([\+\-x/])(\d+)%/g,
+      (_, a, op, b) => `${a}${op} (${a} * ${b}/100)`
     );
 
-    // Reemplazar x por *
     expr = expr.replace(/x/g, "*");
 
     if (/[\+\-x/]$/.test(value)) {
@@ -118,7 +136,6 @@ function calcular() {
       return;
     }
 
-    // Evaluar
     let resultado = eval(expr);
 
     if (!isFinite(resultado)) {
@@ -140,23 +157,23 @@ function calcular() {
     resetAfter();
   }
 }
-//        BORRAR ÚLTIMO
-function deleteLast() {
 
+//  BORRAR ÚLTIMO 
+function deleteLast() {
   if (value.length <= 1) {
     value = "0";
   } else {
     value = value.slice(0, -1);
   }
-
   pantalla.value = value;
 }
-//            BORRAR TODO
+
+//  BORRAR TODO 
 function clearAll() {
   value = "0";
   pantalla.value = "0";
 }
-//   Reset después de error
+
 function resetAfter() {
   value = "0";
   setTimeout(() => pantalla.value = "0", 3000);
