@@ -7,7 +7,7 @@ pantalla.value = "0";
 // EVENTOS DE BOTONES
 botones.forEach(btn => {
   btn.addEventListener("click", () => {
-
+    
     let texto = btn.textContent.trim();
 
     if (btn.classList.contains("numero")) {
