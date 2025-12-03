@@ -25,7 +25,7 @@ botones.forEach(btn => {
 function manejarOperador(op) {
 
   if (op === "C") return clearAll();
-  if (op === "<-") return deleteLast();
+  if (op === "←") return deleteLast();
   if (op === "=") return calcular();
   if (op === ".") return addDecimal();
 
@@ -35,7 +35,8 @@ function manejarOperador(op) {
     "×": "x",
     "+": "+",
     "-": "-",
-    "%": "%"
+    "%": "%",
+    "←": "←"
   };
 
   addOperator(map[op]);
